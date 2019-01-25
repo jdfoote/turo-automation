@@ -7,7 +7,7 @@ import config
 
 RE_REMOVE_HTML = re.compile('<.+?>')
 
-SLEEP_SECONDS = 3
+SLEEP_SECONDS = 10
 
 class TuroCrawler:
     def __init__(self):
@@ -22,15 +22,15 @@ class TuroCrawler:
         self.stop()
 
     def login(self):
-        self.driver.get('https://turo.com/login')
+        self.driver.get('https://turo.com/iframes/login/index.html')
 
-        username = self.driver.find_element_by_id('username')
+        username = self.driver.find_element_by_id('email')
         username.send_keys(config.TURO_USERNAME)
 
-        password = self.driver.find_element_by_name('password')
+        password = self.driver.find_element_by_id('password')
         password.send_keys(config.TURO_PASSWORD)
 
-        self.driver.find_element_by_id("submit").click()
+        self.driver.find_element_by_class_name("emailLoginForm-button").click()
 
     def write_to_file(self, rows, out):
         print 'Writing to file', out
@@ -38,7 +38,8 @@ class TuroCrawler:
         with open(out, 'w') as f:
             w = csv.DictWriter(f,
                     fieldnames = rows[0].keys(),
-                    delimiter=',')
+                    delimiter=',',
+                    extrasaction='ignore')
             w.writeheader()
             w.writerows(rows)
 
